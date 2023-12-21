@@ -12,6 +12,12 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.5",
+    "@metaplex-foundation/mpl-candy-machine": "^6.0.0-alpha.20",
+    "@metaplex-foundation/mpl-token-metadata": "^3.0.0-alpha.27",
+    "@metaplex-foundation/mpl-toolbox": "^0.9.1",
+    "@metaplex-foundation/umi": "^0.8.10",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.8.10",
+    "@metaplex-foundation/umi-signer-wallet-adapters": "^0.8.10",
     "@noble/ed25519": "^1.7.1",
     "@solana/wallet-adapter-base": "^0.9.22",
     "@solana/wallet-adapter-react": "^0.15.32",
