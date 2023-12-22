@@ -37,7 +37,7 @@ const treasury = publicKey(process.env.NEXT_PUBLIC_TREASURY);
 
 export const CandyMint: FC = () => {
   const [mintPrice, setMintPrice] = useState(0);
-  const [destination, setDestination] = useState(0);
+  const [destination, setDestination] = useState("");
   const [remainAmount, setRemainAmount] = useState(0);
   const { connection } = useConnection();
   const wallet = useWallet();
@@ -78,7 +78,7 @@ export const CandyMint: FC = () => {
 
       const solPayment = candyGuard.guards.solPayment; // Sol Payment settings.
       const result = processPayment(solPayment);
-
+      setDestination(result.destination.toString());
       setMintPrice(Number(result.lamports.basisPoints) / LAMPORTS_PER_SOL);
     } catch (error) {}
   };
