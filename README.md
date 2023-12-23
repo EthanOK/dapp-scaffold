@@ -130,9 +130,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 # Docker
 <!-- Windows -->
 
-`docker buildx build -t ethan01/ethan-solana:v1.0.0 . --platform linux/amd64 --push`
+`docker buildx build -t ethan01/ethan-solana:v1.0.1 . --platform linux/amd64 --push`
 
 # pull image
-`docker pull ethan01/ethan-solana:v1.0.0`
+`docker pull ethan01/ethan-solana:v1.0.1`
 
-`docker run -p 9999:3000 --name solana_web_1_0_0 ethan01/ethan-solana:v1.0.0`
+`docker run -p 9999:3000 --name solana_web_1_0_1 ethan01/ethan-solana:v1.0.1`
