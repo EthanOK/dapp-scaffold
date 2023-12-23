@@ -14,19 +14,17 @@ import {
   SolPayment,
   fetchCandyGuard,
   fetchCandyMachine,
-  getSolPaymentSerializer,
   mintV2,
   mplCandyMachine,
   safeFetchCandyGuard,
-  solPaymentGuardManifest,
 } from "@metaplex-foundation/mpl-candy-machine";
 import { walletAdapterIdentity } from "@metaplex-foundation/umi-signer-wallet-adapters";
-import { mplTokenMetadata } from "@metaplex-foundation/mpl-token-metadata";
 import {
-  getSplAddressLookupTableProgram,
-  setComputeUnitLimit,
-} from "@metaplex-foundation/mpl-toolbox";
-import { LAMPORTS_PER_SOL, clusterApiUrl } from "@solana/web3.js";
+  fetchDigitalAssetWithTokenByMint,
+  mplTokenMetadata,
+} from "@metaplex-foundation/mpl-token-metadata";
+import { setComputeUnitLimit } from "@metaplex-foundation/mpl-toolbox";
+import { LAMPORTS_PER_SOL, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import * as bs58 from "bs58";
 
 // These access the environment variables we defined in the .env file
@@ -36,8 +34,10 @@ const candyMachineAddress = publicKey(process.env.NEXT_PUBLIC_CANDY_MACHINE_ID);
 const treasury = publicKey(process.env.NEXT_PUBLIC_TREASURY);
 
 export const CandyMint: FC = () => {
+  const [collectionName, setCollectionName] = useState("");
   const [mintPrice, setMintPrice] = useState(0);
   const [destination, setDestination] = useState("");
+  const [totalAmount, setTotalAmount] = useState(0);
   const [remainAmount, setRemainAmount] = useState(0);
   const { connection } = useConnection();
   const wallet = useWallet();
@@ -60,28 +60,38 @@ export const CandyMint: FC = () => {
   );
 
   useEffect(() => {
-    // const intervalId = setInterval(updateData, 5000);
+    updateData();
+    // const intervalId = setInterval(updateData, 10000);
     // return () => {
     //   clearInterval(intervalId);
     // };
-    updateData();
   }, []);
 
   const updateData = async () => {
     try {
       const candyMachine = await fetchCandyMachine(umi, candyMachineAddress);
-      console.log(candyMachine);
+      console.log("candyMachine:", candyMachine);
+      const digitalAsset = await fetchDigitalAssetWithTokenByMint(
+        umi,
+        candyMachine.collectionMint
+      );
+
+      setCollectionName(digitalAsset.metadata.name);
+
       const amount =
         Number(candyMachine.itemsLoaded) - Number(candyMachine.itemsRedeemed);
+      setTotalAmount(Number(candyMachine.itemsLoaded));
       setRemainAmount(amount);
-      const candyGuard = await fetchCandyGuard(umi, candyMachine.mintAuthority);
 
+      const candyGuard = await fetchCandyGuard(umi, candyMachine.mintAuthority);
+      console.log("candyGuard:", candyGuard);
       const solPayment = candyGuard.guards.solPayment; // Sol Payment settings.
       const result = processPayment(solPayment);
       setDestination(result.destination.toString());
       setMintPrice(Number(result.lamports.basisPoints) / LAMPORTS_PER_SOL);
     } catch (error) {}
   };
+
   const processPayment = (paymentOption: Option<SolPayment>) => {
     if (paymentOption.__option === "Some") {
       const paymentValue = paymentOption.value;
@@ -144,6 +154,10 @@ export const CandyMint: FC = () => {
       notify({ type: "success", message: "Mint successful!", txid });
 
       getUserSOLBalance(wallet.publicKey, connection);
+      const response = await connection.confirmTransaction(txid, "finalized");
+      if (response.value.err == null) {
+        await updateData();
+      }
     } catch (error: any) {
       notify({
         type: "error",
@@ -164,6 +178,10 @@ export const CandyMint: FC = () => {
   return (
     <div>
       <div>
+        <label>NFT Name: {collectionName} </label>
+        <p></p>
+        <label>Total: {totalAmount} </label>
+        <p></p>
         <label>Remain: {remainAmount} </label>
         <p></p>
         <label>Price: {mintPrice} SOL</label>

@@ -125,3 +125,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+
+# Docker
+<!-- Windows -->
+
+`docker buildx build -t ethan01/ethan-solana:v1.0.0 . --platform linux/amd64 --push`
+
+# pull image
+`docker pull ethan01/ethan-solana:v1.0.0`
+
+`docker run -p 9999:3000 --name solana_web_1_0_0 ethan01/ethan-solana:v1.0.0`
