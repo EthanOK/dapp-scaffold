@@ -178,7 +178,7 @@ export const CandyMint: FC = () => {
   return (
     <div>
       <div>
-        <label>NFT Name: {collectionName} </label>
+        <label>Collection Name: {collectionName} </label>
         <p></p>
         <label>Total: {totalAmount} </label>
         <p></p>
